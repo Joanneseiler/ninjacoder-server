@@ -28,11 +28,11 @@ router.get("/parent/", (res, req) => {
 //Parent can edit his profile
 router.patch("/parent/edit", (req, res) => {
   const { _id } = req.session.loggedInUser;
-  const { username, email, password } = req.body;
+  const { username, email, password, secretword, profilePic } = req.body;
   ParentModel.findByIdAndUpdate(
     _id,
     {
-      $set: { username, email, password },
+      $set: { username, email, password, secretword, profilePic },
     },
     { new: true }
   )
