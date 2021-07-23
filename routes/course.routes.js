@@ -38,16 +38,14 @@ router.get("/courses/:courseId", (req, res) => {
 
 router.post("/courses/:courseId/payment", (req, res) => {
   // when you click on pay
-  res.status(200).json({ message: "payment success" });
+  res.status(200).json({ message: "Your kido is going to be a NinjaCoder!" });
 });
 
 // Action can be done only by the tutor
 // Get to tutor profile, to find all courses created by the tutor
 // to handle the GET requests to http:localhost:5005/api/tutor/courses
 router.get("/tutor/courses", (req, res) => {
-  //const { _id } = req.session.userInfo;
-  //for testing with Postman
-  const _id = "8785445";
+  const { _id } = req.session.loggedInUser;
   CourseModel.find({ tutor: _id })
     .then((course) => {
       res.status(200).json(course);
@@ -63,21 +61,14 @@ router.get("/tutor/courses", (req, res) => {
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
 router.post("/tutor/courses/add", (req, res) => {
-  const {
-    name,
-    description,
-    tutor,
-    price,
-    imageUrl,
-    videoUrl,
-    lessons,
-    review,
-  } = req.body;
+  const { _id } = req.session.loggedInUser;
+  const { name, description, price, imageUrl, videoUrl, lessons, review } =
+    req.body;
   // need to check here if the user is a teacher
   CourseModel.create({
     name,
     description,
-    tutor,
+    _id,
     price,
     imageUrl,
     videoUrl,
