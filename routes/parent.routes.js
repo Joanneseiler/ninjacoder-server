@@ -12,8 +12,8 @@ const CourseModel = require("../models/Course.model");
 
 //Show the profile of the parent - only seen by the parent
 router.get("/parent", (req, res) => {
-  const { _id } = req.session.loggedInUser;
-  ParentModel.findById(_id)
+  const parentId = req.session.loggedInUser._id;
+  ParentModel.findById(parentId)
     .then((response) => {
       res.status(200).json(response);
     })
@@ -27,10 +27,10 @@ router.get("/parent", (req, res) => {
 
 //Parent can edit his profile
 router.patch("/parent/edit", (req, res) => {
-  const { _id } = req.session.loggedInUser;
+  const parentId = req.session.loggedInUser._id;
   const { username, email, password, secretword, profilePic } = req.body;
   ParentModel.findByIdAndUpdate(
-    _id,
+    parentId,
     {
       $set: { username, email, password, secretword, profilePic },
     },
@@ -46,8 +46,8 @@ router.patch("/parent/edit", (req, res) => {
 
 //Parent can delete his profile
 router.delete("/parent/delete", (req, res) => {
-  const { _id } = req.session.loggedInUser;
-  ParentModel.findByIdAndDelete(_id)
+  const parentId = req.session.loggedInUser._id;
+  ParentModel.findByIdAndDelete(parentId)
     .then((response) => {
       res.status(200).json(response);
     })
@@ -61,9 +61,9 @@ router.delete("/parent/delete", (req, res) => {
 
 //Parent can see the courses booked
 router.get("/parent/courses", (req, res) => {
-  const { _id } = req.session.loggedInUser;
+  const parentId = req.session.loggedInUser._id;
   console.log(_id);
-  ParentModel.findById(_id)
+  ParentModel.findById(parentId)
     .populate("coursesBooked")
     .then((response) => {
       res.status(200).json(response);

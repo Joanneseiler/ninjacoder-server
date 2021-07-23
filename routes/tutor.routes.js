@@ -27,10 +27,10 @@ router.get("/tutor", (req, res) => {
 
 //Tutor can edit his profile - only done by the tutor
 router.patch("/tutor/edit", (req, res) => {
-  const { _id } = req.session.loggedInUser;
+  const tutorId = req.session.loggedInUser._id;
   const { username, email, password, profilePic } = req.body;
   TutorModel.findByIdAndUpdate(
-    _id,
+    tutorId,
     {
       $set: { username, email, password, profilePic },
     },
@@ -46,8 +46,8 @@ router.patch("/tutor/edit", (req, res) => {
 
 //Tutor can delete his profile
 router.delete("/tutor/delete", (req, res) => {
-  const { _id } = req.session.loggedInUser;
-  TutorModel.findByIdAndDelete(_id)
+  const tutorId = req.session.loggedInUser._id;
+  TutorModel.findByIdAndDelete(tutorId)
     .then((response) => {
       res.status(200).json(response);
     })

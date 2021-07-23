@@ -42,6 +42,7 @@ router.get("/courses/:courseId", (req, res) => {
     });
 });
 
+//TO DO : routes for stripe-payment
 router.post("/courses/:courseId/payment", (req, res) => {
   // when you click on pay
   res.status(200).json({ message: "Your kido is going to be a NinjaCoder!" });
@@ -85,6 +86,7 @@ router.post("/tutor/courses/add", async (req, res) => {
     });
     let updatedTutor = await TutorModel.findByIdAndUpdate(tutorId, {
       // wait for tutor to get updated -> await otherwise Promise
+      //
       $push: { coursesAdded: newCourse._id },
     });
     res.status(200).json(updatedTutor);
