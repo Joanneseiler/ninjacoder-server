@@ -4,6 +4,11 @@ const router = express.Router();
 //require the needed model
 const CourseModel = require("../models/Course.model");
 
+// require middlewares
+// const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
+// const { isParent } = require("../middlewares/checkRoleMiddleware");
+// const { isTutor } = require("../middlewares/checkRoleMiddleware");
+
 // Show the list of courses to anyone
 // to handle the GET requests to http:localhost:5005/api/courses
 router.get("/courses", (req, res) => {
@@ -20,9 +25,9 @@ router.get("/courses", (req, res) => {
     });
 });
 
-//Show the course selected from course list
+//Show the course selected from course list, only user LoggedIn can see the detail of the course
 // to handle the GET requests to http:localhost:5005/api/courses/:courseId
-// middleware is needed here
+
 router.get("/courses/:courseId", (req, res) => {
   CourseModel.findById(req.params.courseId)
     .then((course) => {
@@ -61,9 +66,9 @@ router.get("/tutor/courses", (req, res) => {
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
 router.post("/tutor/courses/add", (req, res) => {
-  const { _id } = req.session.loggedInUser;
   const { name, description, price, imageUrl, videoUrl, lessons, review } =
     req.body;
+  const { _id } = req.session.loggedInUser;
   // need to check here if the user is a teacher
   CourseModel.create({
     name,
