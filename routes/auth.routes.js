@@ -43,8 +43,7 @@ router.post("/signup", (req, res) => {
       });
       //parent.password = "***";
       req.session.loggedInUser = parent;
-      res.status(200).end(); //.json(parent);
-      // res.status(200).end() ? Because we don't need the body in the client
+      res.status(200).json(parent);
       // need to send data if we want to use it in the state
       // if we want to send parent directly to profile save parent in session
       // you always have to send data, but if you don't need it, you can send an empty object {}
@@ -71,7 +70,6 @@ router.post("/signup", (req, res) => {
       tutor.password = "***";
       req.session.loggedInUser = tutor;
       res.status(200).json(tutor);
-      // res.status(200).end() ? Because we don't need the body in the client
       // need to send data if we want to use it in the state
       // save tutor in session if we want to send parent directly to profile
       // you always have to send data, but if you don't need it, you can send an empty object {}
@@ -190,7 +188,6 @@ router.post("/signin", async (req, res) => {
     parent.password = "***";
     req.session.loggedInUser = parent;
     res.status(200).json(parent);
-    // TODO: res.status(200).end() ?
   }
 
   /*
@@ -202,22 +199,19 @@ router.post("/signin", async (req, res) => {
         return;  
     }*/
   if (role === "tutor") {
-    let tutor;
+    let tutor = await Tutor.findOne({ email });
 
-    try {
-      tutor = await Tutor.findOne({ email });
-    } catch (err) {
-      res.status(500).json({
-        error: "Email does not exist",
-        message: err,
-      });
-      return;
+    if (tutor === null) {
+        res.status(404).json({
+            error: "Email does not exist",
+        });
+        return;
     }
 
     let passwordMatches = await bcrypt.compare(password, tutor.password);
 
     if (!passwordMatches) {
-      res.status(500).json({
+      res.status(400).json({
         error: "Passwords don't match",
       });
       return;
@@ -227,7 +221,6 @@ router.post("/signin", async (req, res) => {
     tutor.password = "***";
     req.session.loggedInUser = tutor;
     res.status(200).json(tutor);
-    // TODO: res.status(200).end() ?
   }
 
   /*
