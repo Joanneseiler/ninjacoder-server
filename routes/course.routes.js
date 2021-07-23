@@ -3,6 +3,7 @@ const router = express.Router();
 
 //require the needed model
 const CourseModel = require("../models/Course.model");
+const TutorModel = require("../models/Tutor.model");
 
 // require middlewares
 // const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
@@ -65,27 +66,32 @@ router.get("/tutor/courses", (req, res) => {
 
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
-router.post("/tutor/courses/add", (req, res) => {
+router.post("/tutor/courses/add", async (req, res) => {
   const { name, description, price, imageUrl, videoUrl, lessons, review } =
     req.body;
-  const { _id } = req.session.loggedInUser;
+  const tutorId = req.session.loggedInUser._id;
   // need to check here if the user is a teacher
-  CourseModel.create({
-    name,
-    description,
-    _id,
-    price,
-    imageUrl,
-    videoUrl,
-    lessons,
-    review,
-  })
-    .then((response) => {
-      res.status(200).json(response);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: "Something went wrong", message: err });
+  try {
+    let newCourse = await CourseModel.create({
+      // wait for course to get created -> await otherwise Promise
+      name,
+      description,
+      tutorId,
+      price,
+      imageUrl,
+      videoUrl,
+      lessons,
+      review,
     });
+    let updatedTutor = await TutorModel.findByIdAndUpdate(tutorId, {
+      // wait for tutor to get updated -> await otherwise Promise
+      $push: { coursesAdded: newCourse._id },
+    });
+    res.status(200).json(updatedTutor);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Something went wrong", message: err });
+  }
 });
 
 // Action can be done only by the tutor

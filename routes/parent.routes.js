@@ -11,7 +11,7 @@ const CourseModel = require("../models/Course.model");
 //is middleware for checking if LoggedIn is necessary here ? Since we already check it in the middleware above ?
 
 //Show the profile of the parent - only seen by the parent
-router.get("/parent/", (res, req) => {
+router.get("/parent", (req, res) => {
   const { _id } = req.session.loggedInUser;
   ParentModel.findById(_id)
     .then((response) => {
@@ -60,9 +60,10 @@ router.delete("/parent/delete", (req, res) => {
 });
 
 //Parent can see the courses booked
-router.get("parent/courses", (req, res) => {
+router.get("/parent/courses", (req, res) => {
   const { _id } = req.session.loggedInUser;
-  ParentModel.find(_id)
+  console.log(_id);
+  ParentModel.findById(_id)
     .populate("coursesBooked")
     .then((response) => {
       res.status(200).json(response);

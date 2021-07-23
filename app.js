@@ -46,6 +46,11 @@ app.use("/api", courseRoutes);
 const parentRoutes = require("./routes/parent.routes");
 app.use("/api", parentRoutes);
 
+const tutorRoutes = require("./routes/tutor.routes");
+app.use("/api", tutorRoutes);
+
+const cloudinaryRoutes = require("./routes/file-upload.routes");
+app.use("/api", cloudinaryRoutes);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 
