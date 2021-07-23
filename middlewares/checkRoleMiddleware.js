@@ -1,7 +1,7 @@
 // Middlewares to check the role of the user to do some actions
 
 const isParent = (req, res, next) => {
-  if (req.session.loggedInUser.role != "parent") {
+  if (req.session.loggedInUser.role == "parent") {
     next();
   } else {
     res.status(401).json({
@@ -12,7 +12,7 @@ const isParent = (req, res, next) => {
 };
 
 const isTutor = (req, res, next) => {
-  if (req.session.loggedInUser.role != "tutor") {
+  if (req.session.loggedInUser.role == "tutor") {
     next();
   } else {
     res.status(401).json({

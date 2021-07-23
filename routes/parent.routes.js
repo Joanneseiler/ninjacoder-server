@@ -10,6 +10,6 @@ const ParentModel = require("../models/Parent.model");
 //is middleware for checking if LoggedIn is necessary here ? Since we already check it in the middleware above ?
 
 //
-router.get("/parent");
+// router.get("/parent", isLoggedIn, isParent, (res, req, next));
 
 module.exports = router;
