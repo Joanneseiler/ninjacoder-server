@@ -61,21 +61,14 @@ router.get("/tutor/courses", (req, res) => {
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
 router.post("/tutor/courses/add", (req, res) => {
-  const {
-    name,
-    description,
-    tutor,
-    price,
-    imageUrl,
-    videoUrl,
-    lessons,
-    review,
-  } = req.body;
+  const { _id } = req.session.loggedInUser;
+  const { name, description, price, imageUrl, videoUrl, lessons, review } =
+    req.body;
   // need to check here if the user is a teacher
   CourseModel.create({
     name,
     description,
-    tutor,
+    _id,
     price,
     imageUrl,
     videoUrl,
