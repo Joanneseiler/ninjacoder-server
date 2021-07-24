@@ -14,21 +14,25 @@ router.post("/signup", (req, res) => {
   } else {
     // if role undefined because Postman never ends
     res.status(500).json({
-      errorMessage: "role undefined",
+      errorMessage: "Role undefined",
     });
   }
 
   async function handleParentSignUp() {
-    const { username, email, password, kidAge, secretWord } = req.body;
+    const { username, email, password, repeatedPassword, kidAge, secretWord } = req.body;
 
-    if (
-      !ensureParentFieldsAreSet(username, email, password, kidAge, secretWord)
-    ) {
-      return;
+    console.log(req.body)
+
+    if (!ensureParentFieldsAreSet(username, email, password, repeatedPassword, kidAge, secretWord)) {
+        return;
     }
 
     if (!validateEmailAndPassword(email, password)) {
-      return;
+        return;
+    }
+
+    if (!ensurePasswordsAreEqual(password, repeatedPassword)) {
+        return;
     }
 
     let hash = createPasswordHash(password);
@@ -53,14 +57,18 @@ router.post("/signup", (req, res) => {
   }
 
   async function handleTutorSignUp() {
-    const { username, email, password } = req.body;
+    const { username, email, password, repeatedPassword } = req.body;
 
-    if (!ensureTutorFieldsAreSet(username, email, password)) {
-      return;
+    if (!ensureTutorFieldsAreSet(username, email, password, repeatedPassword)) {
+        return;
     }
 
     if (!validateEmailAndPassword(email, password)) {
-      return;
+        return;
+    }
+
+    if (!ensurePasswordsAreEqual(password, repeatedPassword)) {
+        return;
     }
 
     let hash = createPasswordHash(password);
@@ -92,14 +100,27 @@ router.post("/signup", (req, res) => {
     }
   }
 
+  function ensurePasswordsAreEqual(password, repeatedPassword) {
+    if (password === repeatedPassword) {
+        return true;
+    }
+
+    res.status(400).json({
+        errorMessage: "Password and repeated password are not equal",
+    });
+
+    return false;
+  }
+
   function ensureParentFieldsAreSet(
     username,
     email,
     password,
+    repeatedPassword, 
     kidAge,
     secretWord
   ) {
-    if (!username || !email || !password || !kidAge || !secretWord) {
+    if (!username || !email || !password || !repeatedPassword || !kidAge || !secretWord) {
       res.status(500).json({
         errorMessage: "Please fill in all the fields.",
       });
@@ -110,8 +131,8 @@ router.post("/signup", (req, res) => {
     return true;
   }
 
-  function ensureTutorFieldsAreSet(username, email, password) {
-    if (!username || !email || !password) {
+  function ensureTutorFieldsAreSet(username, email, password, repeatedPassword) {
+    if (!username || !email || !password || !repeatedPassword) {
       res.status(500).json({
         errorMessage: "Please fill in all the fields.",
       });
