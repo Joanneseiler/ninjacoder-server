@@ -4,6 +4,7 @@ const router = express.Router();
 //require the needed model
 const CourseModel = require("../models/Course.model");
 const TutorModel = require("../models/Tutor.model");
+const ParentModel = require("../models/Parent.model");
 
 // require middlewares
 // const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
@@ -14,7 +15,7 @@ const TutorModel = require("../models/Tutor.model");
 // to handle the GET requests to http:localhost:5005/api/courses
 router.get("/courses", (req, res) => {
   CourseModel.find()
-    .populate("tutor")
+    .populate("tutorId")
     .then((courses) => {
       res.status(200).json(courses);
     })
@@ -31,6 +32,7 @@ router.get("/courses", (req, res) => {
 
 router.get("/courses/:courseId", (req, res) => {
   CourseModel.findById(req.params.courseId)
+    .populate("tutorId")
     .then((course) => {
       res.status(200).json(course);
     })
@@ -43,8 +45,11 @@ router.get("/courses/:courseId", (req, res) => {
 });
 
 //TO DO : routes for stripe-payment
-router.post("/courses/:courseId/payment", (req, res) => {
-  // when you click on pay
+router.get("/courses/:courseId/payment", (req, res) => {
+  const { _id } = req.session.loggedInUser; // Parent id as only parents can buy courses
+  ParentModel.findByIdAndUpdate(_id, {
+    $push: { coursesBooked: req.params.courseId },
+  });
   res.status(200).json({ message: "Your kido is going to be a NinjaCoder!" });
 });
 
@@ -70,6 +75,7 @@ router.get("/tutor/courses", (req, res) => {
 router.post("/tutor/courses/add", async (req, res) => {
   const { name, description, price, image, video, lessons, review } = req.body;
   const tutorId = req.session.loggedInUser._id;
+  console.log(req.body);
   // need to check here if the user is a teacher
   try {
     let newCourse = await CourseModel.create({
