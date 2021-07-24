@@ -14,7 +14,7 @@ router.post("/signup", (req, res) => {
   } else {
     // if role undefined because Postman never ends
     res.status(500).json({
-      errorMessage: "Role undefined",
+      errorMessage: "Role undefined.",
     });
   }
 
@@ -89,12 +89,12 @@ router.post("/signup", (req, res) => {
   function handleSignUpErrorCode(err, res) {
     if (err.code === 11000) {
       res.status(500).json({
-        errorMessage: "username or email already exists!",
+        errorMessage: "Username or email already exists.",
         message: err,
       });
     } else {
       res.status(500).json({
-        errorMessage: "Something went wrong!",
+        errorMessage: "Something went wrong.",
         message: err, // Doesn't show the error when something went wrong on Postman
       });
     }
@@ -106,7 +106,7 @@ router.post("/signup", (req, res) => {
     }
 
     res.status(400).json({
-        errorMessage: "Password and repeated password are not equal",
+        errorMessage: "Password and repeated password are not equal.",
     });
 
     return false;
@@ -154,7 +154,7 @@ router.post("/signup", (req, res) => {
     );
     if (!myRegex.test(email)) {
       res.status(500).json({
-        errorMessage: "Email format not correct",
+        errorMessage: "Email format not correct.",
       });
       return false;
     }
@@ -164,7 +164,7 @@ router.post("/signup", (req, res) => {
     if (!myPassRegex.test(password)) {
       res.status(500).json({
         errorMessage:
-          "Password needs to have 8 characters, a number and an uppercase alphabet",
+          "Password needs to have 8 characters, a number and an uppercase alphabet.",
       });
       return false;
     }
@@ -178,7 +178,7 @@ router.post("/signin", async (req, res) => {
 
   if (!email || !password || !role) {
     res.status(500).json({
-      error: "Please enter email, password and role",
+      errorMessage: "Please enter email, password and role.",
     });
     return;
   }
@@ -190,7 +190,7 @@ router.post("/signin", async (req, res) => {
       parent = await Parent.findOne({ email });
     } catch (err) {
       res.status(500).json({
-        error: "Email does not exist",
+        errorMessage: "Email does not exist.",
         message: err,
       });
       return;
@@ -224,7 +224,7 @@ router.post("/signin", async (req, res) => {
 
     if (tutor === null) {
         res.status(404).json({
-            error: "Email does not exist",
+            errorMessage: "Email does not exist.",
         });
         return;
     }
@@ -233,7 +233,7 @@ router.post("/signin", async (req, res) => {
 
     if (!passwordMatches) {
       res.status(400).json({
-        error: "Passwords don't match",
+        errorMessage: "Passwords don't match.",
       });
       return;
       // TODO: return? Oder bricht res.status schon alles ab
@@ -264,7 +264,7 @@ const isLoggedIn = (req, res, next) => {
     next();
   } else {
     res.status(401).json({
-      message: "Unauthorized user",
+      errorMessage: "Unauthorized user.",
       code: 401,
     });
   }
