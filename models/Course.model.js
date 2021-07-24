@@ -6,8 +6,8 @@ const courseSchema = new Schema({
   tutor: { type: Schema.Types.ObjectId, ref: "Tutor" },
   price: { type: Number, required: true },
   minAge: { type: Number },
-  imageUrl: { type: String, required: true },
-  videoUrl: { type: String, required: true },
+  image: { type: String, required: true },
+  video: { type: String, required: true },
   lessons: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
   review: { type: Schema.Types.ObjectId, ref: "Review" },
 });

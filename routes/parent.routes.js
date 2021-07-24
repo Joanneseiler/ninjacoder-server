@@ -29,6 +29,9 @@ router.get("/parent", (req, res) => {
 router.patch("/parent/edit", (req, res) => {
   const parentId = req.session.loggedInUser._id;
   const { username, email, password, secretword, profilePic } = req.body;
+  if (!profilePic) {
+    profilePic = req.session.loggedInUser.profilePic;
+  }
   ParentModel.findByIdAndUpdate(
     parentId,
     {

@@ -68,8 +68,7 @@ router.get("/tutor/courses", (req, res) => {
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
 router.post("/tutor/courses/add", async (req, res) => {
-  const { name, description, price, imageUrl, videoUrl, lessons, review } =
-    req.body;
+  const { name, description, price, image, video, lessons, review } = req.body;
   const tutorId = req.session.loggedInUser._id;
   // need to check here if the user is a teacher
   try {
@@ -79,8 +78,8 @@ router.post("/tutor/courses/add", async (req, res) => {
       description,
       tutorId,
       price,
-      imageUrl,
-      videoUrl,
+      image,
+      video,
       lessons,
       review,
     });
@@ -117,11 +116,11 @@ router.delete("/tutor/courses/:courseId", (req, res) => {
 //will handle all PATCH requests to http:localhost:5005/api/tutor/courses/:courseId
 router.patch("/tutor/courses/:courseId", (req, res) => {
   let courseId = req.params.courseId;
-  const { name, description, price, imageUrl, videoUrl, lessons } = req.body;
+  const { name, description, price, image, video, lessons } = req.body;
   CourseModel.findByIdAndUpdate(
     courseId,
     {
-      $set: { name, description, price, imageUrl, videoUrl, lessons },
+      $set: { name, description, price, image, video, lessons },
     },
     { new: true }
   )

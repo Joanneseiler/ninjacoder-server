@@ -29,6 +29,9 @@ router.get("/tutor", (req, res) => {
 router.patch("/tutor/edit", (req, res) => {
   const tutorId = req.session.loggedInUser._id;
   const { username, email, password, profilePic } = req.body;
+  if (!profilePic) {
+    profilePic = req.session.loggedInUser.profilePic;
+  }
   TutorModel.findByIdAndUpdate(
     tutorId,
     {
