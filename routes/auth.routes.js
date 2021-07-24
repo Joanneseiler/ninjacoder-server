@@ -223,17 +223,10 @@ router.post("/signin", async (req, res) => {
     let tutor = await Tutor.findOne({ email });
 
     if (tutor === null) {
-<<<<<<< HEAD
         res.status(404).json({
             errorMessage: "Email does not exist.",
         });
         return;
-=======
-      res.status(404).json({
-        error: "Email does not exist",
-      });
-      return;
->>>>>>> 8484d0499378a91b190d8c315ff8f129c2e123bf
     }
 
     let passwordMatches = await bcrypt.compare(password, tutor.password);
