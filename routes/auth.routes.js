@@ -55,9 +55,12 @@ router.post("/signup", (req, res) => {
         kidAge,
         secretWord,
       });
-      //parent.password = "***";
-      req.session.loggedInUser = parent;
-      res.status(200).json(parent);
+
+    let responseObject = parent.toObject()
+    responseObject.password = "***";
+    responseObject.role = role;
+    req.session.loggedInUser = responseObject;
+    res.status(200).json(responseObject);
       // need to send data if we want to use it in the state
       // if we want to send parent directly to profile save parent in session
       // you always have to send data, but if you don't need it, you can send an empty object {}
@@ -85,9 +88,11 @@ router.post("/signup", (req, res) => {
 
     try {
       let tutor = await Tutor.create({ username, email, password: hash });
-      tutor.password = "***";
-      req.session.loggedInUser = tutor;
-      res.status(200).json(tutor);
+      let responseObject = tutor.toObject()
+      responseObject.password = "***";
+      responseObject.role = role;
+      req.session.loggedInUser = responseObject;
+      res.status(200).json(responseObject);
       // need to send data if we want to use it in the state
       // save tutor in session if we want to send parent directly to profile
       // you always have to send data, but if you don't need it, you can send an empty object {}
@@ -225,12 +230,13 @@ router.post("/signin", async (req, res) => {
         error: "Passwords don't match",
       });
       return;
-      // TODO: return? Oder bricht res.status schon alles ab
     }
 
-    parent.password = "***";
-    req.session.loggedInUser = parent;
-    res.status(200).json(parent);
+    let responseObject = parent.toObject()
+    responseObject.password = "***";
+    responseObject.role = role;
+    req.session.loggedInUser = responseObject;
+    res.status(200).json(responseObject);
   }
 
   /*
@@ -261,9 +267,11 @@ router.post("/signin", async (req, res) => {
       // TODO: return? Oder bricht res.status schon alles ab
     }
 
-    tutor.password = "***";
-    req.session.loggedInUser = tutor;
-    res.status(200).json(tutor);
+    let responseObject = tutor.toObject()
+    responseObject.password = "***";
+    responseObject.role = role;
+    req.session.loggedInUser = responseObject;
+    res.status(200).json(responseObject);
   }
 
   /*
