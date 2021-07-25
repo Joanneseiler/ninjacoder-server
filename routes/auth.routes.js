@@ -19,20 +19,30 @@ router.post("/signup", (req, res) => {
   }
 
   async function handleParentSignUp() {
-    const { username, email, password, repeatedPassword, kidAge, secretWord } = req.body;
+    const { username, email, password, repeatedPassword, kidAge, secretWord } =
+      req.body;
 
-    console.log(req.body)
+    console.log(req.body);
 
-    if (!ensureParentFieldsAreSet(username, email, password, repeatedPassword, kidAge, secretWord)) {
-        return;
+    if (
+      !ensureParentFieldsAreSet(
+        username,
+        email,
+        password,
+        repeatedPassword,
+        kidAge,
+        secretWord
+      )
+    ) {
+      return;
     }
 
     if (!validateEmailAndPassword(email, password)) {
-        return;
+      return;
     }
 
     if (!ensurePasswordsAreEqual(password, repeatedPassword)) {
-        return;
+      return;
     }
 
     let hash = createPasswordHash(password);
@@ -60,15 +70,15 @@ router.post("/signup", (req, res) => {
     const { username, email, password, repeatedPassword } = req.body;
 
     if (!ensureTutorFieldsAreSet(username, email, password, repeatedPassword)) {
-        return;
+      return;
     }
 
     if (!validateEmailAndPassword(email, password)) {
-        return;
+      return;
     }
 
     if (!ensurePasswordsAreEqual(password, repeatedPassword)) {
-        return;
+      return;
     }
 
     let hash = createPasswordHash(password);
@@ -102,11 +112,11 @@ router.post("/signup", (req, res) => {
 
   function ensurePasswordsAreEqual(password, repeatedPassword) {
     if (password === repeatedPassword) {
-        return true;
+      return true;
     }
 
     res.status(400).json({
-        errorMessage: "Password and repeated password are not equal.",
+      errorMessage: "Password and repeated password are not equal.",
     });
 
     return false;
@@ -116,11 +126,18 @@ router.post("/signup", (req, res) => {
     username,
     email,
     password,
-    repeatedPassword, 
+    repeatedPassword,
     kidAge,
     secretWord
   ) {
-    if (!username || !email || !password || !repeatedPassword || !kidAge || !secretWord) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !repeatedPassword ||
+      !kidAge ||
+      !secretWord
+    ) {
       res.status(500).json({
         errorMessage: "Please fill in all the fields.",
       });
@@ -131,7 +148,12 @@ router.post("/signup", (req, res) => {
     return true;
   }
 
-  function ensureTutorFieldsAreSet(username, email, password, repeatedPassword) {
+  function ensureTutorFieldsAreSet(
+    username,
+    email,
+    password,
+    repeatedPassword
+  ) {
     if (!username || !email || !password || !repeatedPassword) {
       res.status(500).json({
         errorMessage: "Please fill in all the fields.",
@@ -223,10 +245,10 @@ router.post("/signin", async (req, res) => {
     let tutor = await Tutor.findOne({ email });
 
     if (tutor === null) {
-        res.status(404).json({
-            errorMessage: "Email does not exist.",
-        });
-        return;
+      res.status(404).json({
+        errorMessage: "Email does not exist.",
+      });
+      return;
     }
 
     let passwordMatches = await bcrypt.compare(password, tutor.password);
@@ -264,7 +286,7 @@ const isLoggedIn = (req, res, next) => {
     next();
   } else {
     res.status(401).json({
-      errorMessage: "Unauthorized user.",
+      errorMessage: "Sorry, you are not allowed to be here",
       code: 401,
     });
   }
