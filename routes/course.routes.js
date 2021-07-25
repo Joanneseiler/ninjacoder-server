@@ -48,9 +48,20 @@ router.get("/courses/:courseId", (req, res) => {
 router.get("/courses/:courseId/payment", (req, res) => {
   const { _id } = req.session.loggedInUser; // Parent id as only parents can buy courses
   ParentModel.findByIdAndUpdate(_id, {
-    $push: { coursesBooked: req.params.courseId },
-  });
-  res.status(200).json({ message: "Your kido is going to be a NinjaCoder!" });
+    $addToSet: { coursesBooked: req.params.courseId }, // addToSet, avoid duplicates but doesn't throw error if a course already exists
+  })
+    .then((parent) => {
+      res
+        .status(200)
+        .json({ message: "Your kido is going to be a NinjaCoder!" });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
 });
 
 // Action can be done only by the tutor
@@ -105,11 +116,20 @@ router.post("/tutor/courses/add", async (req, res) => {
 // Delete courses from database
 // will handle all DELETE requests to http:localhost:5005/api/courses/:courseId
 router.delete("/tutor/courses/:courseId", (req, res) => {
-  CourseModel.findByIdAndDelete(req.params.courseId)
+  const tutorId = req.session.loggedInUser._id;
+  const courseId = req.params.courseId;
+  Promise.all([
+    // Make sure that all promises succeed. The course removed from courses and the teacher otherwise throw an error
+    CourseModel.findByIdAndDelete(courseId),
+    TutorModel.findByIdAndUpdate(tutorId, {
+      $pull: { coursesAdded: courseId },
+    }),
+  ])
     .then((response) => {
       res.status(200).json(response);
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({
         error: "Something went wrong",
         message: err,
