@@ -9,7 +9,7 @@ const courseSchema = new Schema({
   image: { type: String, required: true },
   video: { type: String, required: true },
   lessons: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
-  review: { type: Schema.Types.ObjectId, ref: "Review" },
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
 });
 
 const Course = model("Course", courseSchema);

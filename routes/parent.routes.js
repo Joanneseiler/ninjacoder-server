@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 
 const ParentModel = require("../models/Parent.model");
 const CourseModel = require("../models/Course.model");
+const ReviewModel = require("../models/Review.model");
 
 //Middleware : check if role === parent to do actions below
 //is middleware for checking if LoggedIn is necessary here ? Since we already check it in the middleware above ?
@@ -87,5 +88,19 @@ function createPasswordHash(password) {
   let salt = bcrypt.genSaltSync(10);
   return bcrypt.hashSync(password, salt);
 }
+
+//Parent can get their reviews
+router.get("/parent/:courseId/rating", (req, res) => {
+  const parentId = req.session.loggedInUser._id;
+  const courseId = req.params.courseId;
+  ReviewModel.find({ userId: parentId, courseId: courseId })
+    .then((review) => res.status(200).json(review))
+    .catch((err) => {
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
+});
 
 module.exports = router;

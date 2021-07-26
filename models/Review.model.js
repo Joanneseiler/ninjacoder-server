@@ -5,7 +5,7 @@ const reviewSchema = new Schema({
   date: { type: Date, required: true },
   feedback: { type: String, required: true },
   courseId: { type: Schema.Types.ObjectId, ref: "Course" },
-  userId: [{ type: Schema.Types.ObjectId, ref: "Parent" }],
+  userId: { type: Schema.Types.ObjectId, ref: "Parent" },
 });
 
 const Review = model("Review", reviewSchema);
