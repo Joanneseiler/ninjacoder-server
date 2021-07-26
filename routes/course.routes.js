@@ -5,7 +5,7 @@ const router = express.Router();
 const CourseModel = require("../models/Course.model");
 const TutorModel = require("../models/Tutor.model");
 const ParentModel = require("../models/Parent.model");
-const Review = require("../models/Review.model");
+const ReviewModel = require("../models/Review.model");
 
 // require middlewares
 // const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
@@ -68,10 +68,10 @@ router.get("/courses/:courseId/payment", (req, res) => {
 // Action can be done only by the parent
 // Modify course's rating
 router.post("/courses/rating", async (req, res) => {
-  const { userId } = req.session.loggedInUser._id; // Parent id as only parents can rate courses
+  const userId = req.session.loggedInUser._id; // Parent id as only parents can rate courses
   const { rate, date, feedback, courseId } = req.body;
   try {
-    let newReview = await Review.create({
+    let newReview = await ReviewModel.create({
       rate,
       date,
       feedback,
@@ -96,7 +96,8 @@ router.post("/courses/rating", async (req, res) => {
 // Get course's rating
 router.get("/courses/:courseId/rating", (req, res) => {
   const courseId = req.params.courseId;
-  CourseModel.find({ _id: courseId })
+  console.log(courseId);
+  CourseModel.findOne({ _id: courseId })
     .populate("reviews")
     .then((course) => {
       let ratings = course.reviews.map((review) => review.rate); // Give an array of ratings
@@ -105,7 +106,8 @@ router.get("/courses/:courseId/rating", (req, res) => {
         return total + rating;
       }, 0);
       let averageRating = total / ratings.length; // Give average of ratings
-      res.status(200).json({ averageRating: averageRating });
+      console.log(averageRating);
+      res.status(200).json([{ rate: averageRating }]);
     })
     .catch((err) => {
       res.status(500).json({

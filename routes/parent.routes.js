@@ -6,6 +6,7 @@ const router = express.Router();
 
 const ParentModel = require("../models/Parent.model");
 const CourseModel = require("../models/Course.model");
+const ReviewModel = require("../models/Review.model");
 
 //Middleware : check if role === parent to do actions below
 //is middleware for checking if LoggedIn is necessary here ? Since we already check it in the middleware above ?
@@ -71,6 +72,20 @@ router.get("/parent/courses", (req, res) => {
     .then((response) => {
       res.status(200).json(response);
     })
+    .catch((err) => {
+      res.status(500).json({
+        error: "Something went wrong",
+        message: err,
+      });
+    });
+});
+
+//Parent can get their reviews
+router.get("/parent/:courseId/rating", (req, res) => {
+  const parentId = req.session.loggedInUser._id;
+  const courseId = req.params.courseId;
+  ReviewModel.find({ userId: parentId, courseId: courseId })
+    .then((review) => res.status(200).json(review))
     .catch((err) => {
       res.status(500).json({
         error: "Something went wrong",
