@@ -54,11 +54,11 @@ router.post("/signup", (req, res) => {
         password: hash,
         kidAge,
         secretWord,
-      });
+      })
 
     let responseObject = parent.toObject()
     responseObject.password = "***";
-    responseObject.role = role;
+    responseObject.role = 'parent';
     req.session.loggedInUser = responseObject;
     res.status(200).json(responseObject);
       // need to send data if we want to use it in the state
@@ -87,10 +87,10 @@ router.post("/signup", (req, res) => {
     let hash = createPasswordHash(password);
 
     try {
-      let tutor = await Tutor.create({ username, email, password: hash });
+      let tutor = await Tutor.create({ username, email, password: hash })
       let responseObject = tutor.toObject()
       responseObject.password = "***";
-      responseObject.role = role;
+      responseObject.role = 'tutor';
       req.session.loggedInUser = responseObject;
       res.status(200).json(responseObject);
       // need to send data if we want to use it in the state
@@ -214,7 +214,7 @@ router.post("/signin", async (req, res) => {
     let parent;
 
     try {
-      parent = await Parent.findOne({ email });
+      parent = await Parent.findOne({ email }).populate('coursesBooked');
     } catch (err) {
       res.status(500).json({
         errorMessage: "Email does not exist.",
@@ -248,7 +248,7 @@ router.post("/signin", async (req, res) => {
         return;  
     }*/
   if (role === "tutor") {
-    let tutor = await Tutor.findOne({ email });
+    let tutor = await Tutor.findOne({ email }).populate('coursesAdded');
 
     if (tutor === null) {
       res.status(404).json({
@@ -300,8 +300,21 @@ const isLoggedIn = (req, res, next) => {
   }
 };
 
-router.get("/user", isLoggedIn, (req, res, next) => {
-  res.status(200).json(req.session.loggedInUser);
+router.get("/user", isLoggedIn, async (req, res, next) => {
+  let user;
+
+  if (req.session.loggedInUser.role === 'parent') {
+    user = await Parent.findById(req.session.loggedInUser._id).populate('coursesBooked');
+    user = user.toObject();
+    user.role = 'parent';
+  }
+  else {
+    user = await Tutor.findById(req.session.loggedInUser._id).populate('coursesAdded');
+    user = user.toObject();
+    user.role = 'tutor';
+  }
+  
+  res.status(200).json(user);
 });
 
 module.exports = router;
