@@ -61,9 +61,6 @@ router.post("/signup", (req, res) => {
     responseObject.role = 'parent';
     req.session.loggedInUser = responseObject;
     res.status(200).json(responseObject);
-      // need to send data if we want to use it in the state
-      // if we want to send parent directly to profile save parent in session
-      // you always have to send data, but if you don't need it, you can send an empty object {}
     } catch (err) {
       handleSignUpErrorCode(err, res);
     }
@@ -93,9 +90,6 @@ router.post("/signup", (req, res) => {
       responseObject.role = 'tutor';
       req.session.loggedInUser = responseObject;
       res.status(200).json(responseObject);
-      // need to send data if we want to use it in the state
-      // save tutor in session if we want to send parent directly to profile
-      // you always have to send data, but if you don't need it, you can send an empty object {}
     } catch (err) {
       handleSignUpErrorCode(err, res);
     }
@@ -110,7 +104,7 @@ router.post("/signup", (req, res) => {
     } else {
       res.status(500).json({
         errorMessage: "Something went wrong.",
-        message: err, // Doesn't show the error when something went wrong on Postman
+        message: err, // Doesn't show the error when something went wrong on Postman, but it does in the Browser.
       });
     }
   }
@@ -264,7 +258,6 @@ router.post("/signin", async (req, res) => {
         errorMessage: "Passwords don't match.",
       });
       return;
-      // TODO: return? Oder bricht res.status schon alles ab
     }
 
     let responseObject = tutor.toObject()

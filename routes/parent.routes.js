@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 
 // const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
 // const { isParent } = require("../middlewares/checkRoleMiddleware");
@@ -28,14 +29,17 @@ router.get("/parent", (req, res) => {
 //Parent can edit his profile
 router.patch("/parent/edit", (req, res) => {
   const parentId = req.session.loggedInUser._id;
-  const { username, email, password, secretword, profilePic } = req.body;
-  if (!profilePic) {
-    profilePic = req.session.loggedInUser.profilePic;
+  let { username, email, password, secretWord, profilePic, kidAge } = req.body;
+  let setObject = { username, email, secretWord, kidAge, password: createPasswordHash(password) };
+
+  if (profilePic) {
+    setObject.profilePic = profilePic;
   }
+
   ParentModel.findByIdAndUpdate(
     parentId,
     {
-      $set: { username, email, password, secretword, profilePic },
+      $set: setObject,
     },
     { new: true }
   )
@@ -78,5 +82,10 @@ router.get("/parent/courses", (req, res) => {
       });
     });
 });
+
+function createPasswordHash(password) {
+  let salt = bcrypt.genSaltSync(10);
+  return bcrypt.hashSync(password, salt);
+}
 
 module.exports = router;
