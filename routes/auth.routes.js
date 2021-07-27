@@ -297,9 +297,12 @@ router.get("/user", isLoggedIn, async (req, res, next) => {
   let user;
 
   if (req.session.loggedInUser.role === "parent") {
-    user = await Parent.findById(req.session.loggedInUser._id).populate(
-      "coursesBooked"
-    );
+    user = await Parent.findById(req.session.loggedInUser._id).populate({
+      path: "coursesBooked",
+      populate: {
+        path: "tutorId",
+      },
+    });
     user = user.toObject();
     user.role = "parent";
   } else {
