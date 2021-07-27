@@ -16,6 +16,7 @@ const ReviewModel = require("../models/Review.model");
 router.get("/parent", (req, res) => {
   const parentId = req.session.loggedInUser._id;
   ParentModel.findById(parentId)
+    .populate("coursesBooked")
     .then((response) => {
       res.status(200).json(response);
     })
@@ -31,7 +32,13 @@ router.get("/parent", (req, res) => {
 router.patch("/parent/edit", (req, res) => {
   const parentId = req.session.loggedInUser._id;
   let { username, email, password, secretWord, profilePic, kidAge } = req.body;
-  let setObject = { username, email, secretWord, kidAge, password: createPasswordHash(password) };
+  let setObject = {
+    username,
+    email,
+    secretWord,
+    kidAge,
+    password: createPasswordHash(password),
+  };
 
   if (profilePic) {
     setObject.profilePic = profilePic;

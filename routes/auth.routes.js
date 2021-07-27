@@ -54,13 +54,13 @@ router.post("/signup", (req, res) => {
         password: hash,
         kidAge,
         secretWord,
-      })
+      });
 
-    let responseObject = parent.toObject()
-    responseObject.password = "***";
-    responseObject.role = 'parent';
-    req.session.loggedInUser = responseObject;
-    res.status(200).json(responseObject);
+      let responseObject = parent.toObject();
+      responseObject.password = "***";
+      responseObject.role = "parent";
+      req.session.loggedInUser = responseObject;
+      res.status(200).json(responseObject);
     } catch (err) {
       handleSignUpErrorCode(err, res);
     }
@@ -84,10 +84,10 @@ router.post("/signup", (req, res) => {
     let hash = createPasswordHash(password);
 
     try {
-      let tutor = await Tutor.create({ username, email, password: hash })
-      let responseObject = tutor.toObject()
+      let tutor = await Tutor.create({ username, email, password: hash });
+      let responseObject = tutor.toObject();
       responseObject.password = "***";
-      responseObject.role = 'tutor';
+      responseObject.role = "tutor";
       req.session.loggedInUser = responseObject;
       res.status(200).json(responseObject);
     } catch (err) {
@@ -208,7 +208,7 @@ router.post("/signin", async (req, res) => {
     let parent;
 
     try {
-      parent = await Parent.findOne({ email }).populate('coursesBooked');
+      parent = await Parent.findOne({ email }).populate("coursesBooked");
     } catch (err) {
       res.status(500).json({
         errorMessage: "Email does not exist.",
@@ -226,7 +226,7 @@ router.post("/signin", async (req, res) => {
       return;
     }
 
-    let responseObject = parent.toObject()
+    let responseObject = parent.toObject();
     responseObject.password = "***";
     responseObject.role = role;
     req.session.loggedInUser = responseObject;
@@ -242,7 +242,7 @@ router.post("/signin", async (req, res) => {
         return;  
     }*/
   if (role === "tutor") {
-    let tutor = await Tutor.findOne({ email }).populate('coursesAdded');
+    let tutor = await Tutor.findOne({ email }).populate("coursesAdded");
 
     if (tutor === null) {
       res.status(404).json({
@@ -260,7 +260,7 @@ router.post("/signin", async (req, res) => {
       return;
     }
 
-    let responseObject = tutor.toObject()
+    let responseObject = tutor.toObject();
     responseObject.password = "***";
     responseObject.role = role;
     req.session.loggedInUser = responseObject;
@@ -296,17 +296,23 @@ const isLoggedIn = (req, res, next) => {
 router.get("/user", isLoggedIn, async (req, res, next) => {
   let user;
 
-  if (req.session.loggedInUser.role === 'parent') {
-    user = await Parent.findById(req.session.loggedInUser._id).populate('coursesBooked');
+  if (req.session.loggedInUser.role === "parent") {
+    user = await Parent.findById(req.session.loggedInUser._id).populate(
+      "coursesBooked"
+    );
     user = user.toObject();
-    user.role = 'parent';
-  }
-  else {
-    user = await Tutor.findById(req.session.loggedInUser._id).populate('coursesAdded');
+    user.role = "parent";
+  } else {
+    user = await Tutor.findById(req.session.loggedInUser._id).populate({
+      path: "coursesAdded",
+      populate: {
+        path: "tutorId",
+      },
+    });
     user = user.toObject();
-    user.role = 'tutor';
+    user.role = "tutor";
   }
-  
+
   res.status(200).json(user);
 });
 
