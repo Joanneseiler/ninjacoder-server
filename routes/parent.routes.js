@@ -77,7 +77,6 @@ router.delete("/parent/delete", (req, res) => {
 //Parent can see the courses booked
 router.get("/parent/courses", (req, res) => {
   const parentId = req.session.loggedInUser._id;
-  console.log(_id);
   ParentModel.findById(parentId)
     .populate("coursesBooked")
     .then((response) => {
