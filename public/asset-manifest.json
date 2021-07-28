@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/static/js/main.e9d2fc39.chunk.js",
+    "main.js.map": "/static/js/main.e9d2fc39.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.28d73361.js",
+    "runtime-main.js.map": "/static/js/runtime-main.28d73361.js.map",
+    "static/js/2.bc7b8384.chunk.js": "/static/js/2.bc7b8384.chunk.js",
+    "static/js/2.bc7b8384.chunk.js.map": "/static/js/2.bc7b8384.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.bc7b8384.chunk.js.LICENSE.txt": "/static/js/2.bc7b8384.chunk.js.LICENSE.txt",
+    "static/media/Login-logo.b90cbc5a.png": "/static/media/Login-logo.b90cbc5a.png",
+    "static/media/NinjaCoder-logo.884ec274.png": "/static/media/NinjaCoder-logo.884ec274.png",
+    "static/media/envelope-solid.80b23b18.svg": "/static/media/envelope-solid.80b23b18.svg",
+    "static/media/helloNinjaKitty.4afc063d.png": "/static/media/helloNinjaKitty.4afc063d.png",
+    "static/media/sadNinjaKitty.24350543.png": "/static/media/sadNinjaKitty.24350543.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.28d73361.js",
+    "static/js/2.bc7b8384.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.e9d2fc39.chunk.js"
+  ]
+}
