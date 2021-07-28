@@ -221,7 +221,7 @@ router.post("/signin", async (req, res) => {
 
     if (!passwordMatches) {
       res.status(500).json({
-        error: "Passwords don't match",
+        errorMessage: "Passwords don't match.",
       });
       return;
     }
