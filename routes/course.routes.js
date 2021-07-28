@@ -8,9 +8,9 @@ const ParentModel = require("../models/Parent.model");
 const ReviewModel = require("../models/Review.model");
 
 // require middlewares
-// const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
-// const { isParent } = require("../middlewares/checkRoleMiddleware");
-// const { isTutor } = require("../middlewares/checkRoleMiddleware");
+const { isLoggedIn } = require("../middlewares/loggedInMiddleware");
+const { isParent } = require("../middlewares/checkRoleMiddleware");
+const { isTutor } = require("../middlewares/checkRoleMiddleware");
 
 // Show the list of courses to anyone
 // to handle the GET requests to http:localhost:5005/api/courses
@@ -31,7 +31,7 @@ router.get("/courses", (req, res) => {
 //Show the course selected from course list, only user LoggedIn can see the detail of the course
 // to handle the GET requests to http:localhost:5005/api/courses/:courseId
 
-router.get("/courses/:courseId", (req, res) => {
+router.get("/courses/:courseId", isLoggedIn, (req, res) => {
   CourseModel.findById(req.params.courseId)
     .populate("tutorId")
     .then((course) => {
@@ -46,7 +46,7 @@ router.get("/courses/:courseId", (req, res) => {
 });
 
 //TO DO : routes for stripe-payment
-router.get("/courses/:courseId/payment", (req, res) => {
+router.get("/courses/:courseId/payment", isLoggedIn, isParent, (req, res) => {
   const { _id } = req.session.loggedInUser; // Parent id as only parents can buy courses
   ParentModel.findByIdAndUpdate(_id, {
     $addToSet: { coursesBooked: req.params.courseId }, // addToSet, avoid duplicates but doesn't throw error if a course already exists
@@ -96,7 +96,6 @@ router.post("/courses/rating", async (req, res) => {
 // Get course's rating
 router.get("/courses/:courseId/rating", (req, res) => {
   const courseId = req.params.courseId;
-  console.log(courseId);
   CourseModel.findOne({ _id: courseId })
     .populate("reviews")
     .then((course) => {
@@ -106,7 +105,6 @@ router.get("/courses/:courseId/rating", (req, res) => {
         return total + rating;
       }, 0);
       let averageRating = total / ratings.length; // Give average of ratings
-      console.log(averageRating);
       res.status(200).json([{ rate: averageRating }]);
     })
     .catch((err) => {
@@ -120,7 +118,7 @@ router.get("/courses/:courseId/rating", (req, res) => {
 // Action can be done only by the tutor
 // Get to tutor profile, to find all courses created by the tutor
 // to handle the GET requests to http:localhost:5005/api/tutor/courses
-router.get("/tutor/courses", (req, res) => {
+router.get("/tutor/courses", isLoggedIn, isTutor, (req, res) => {
   const { _id } = req.session.loggedInUser;
   CourseModel.find({ tutor: _id })
     .then((course) => {
@@ -136,7 +134,7 @@ router.get("/tutor/courses", (req, res) => {
 
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
-router.post("/tutor/courses/add", async (req, res) => {
+router.post("/tutor/courses/add", isLoggedIn, isTutor, async (req, res) => {
   const { name, description, price, image, video, lessons, review } = req.body;
   const tutorId = req.session.loggedInUser._id;
   console.log(req.body);
@@ -158,7 +156,7 @@ router.post("/tutor/courses/add", async (req, res) => {
       //
       $push: { coursesAdded: newCourse._id },
     });
-    res.status(200).json(updatedTutor);
+    res.status(200).json(newCourse);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Something went wrong", message: err });
@@ -168,7 +166,7 @@ router.post("/tutor/courses/add", async (req, res) => {
 // Action can be done only by the tutor
 // Delete courses from database
 // will handle all DELETE requests to http:localhost:5005/api/courses/:courseId
-router.delete("/tutor/courses/:courseId", (req, res) => {
+router.delete("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
   const tutorId = req.session.loggedInUser._id;
   const courseId = req.params.courseId;
   Promise.all([
@@ -193,7 +191,7 @@ router.delete("/tutor/courses/:courseId", (req, res) => {
 // Action can be done only by the tutor
 // Edit courses from database
 //will handle all PATCH requests to http:localhost:5005/api/tutor/courses/:courseId
-router.patch("/tutor/courses/:courseId", (req, res) => {
+router.patch("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
   let courseId = req.params.courseId;
   const { name, description, price, image, video, lessons } = req.body;
   CourseModel.findByIdAndUpdate(

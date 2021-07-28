@@ -2,7 +2,7 @@
 
 const isLoggedIn = (req, res, next) => {
   if (req.session.loggedInUser) {
-    net();
+    next();
   } else {
     res
       .status(401)
