@@ -45,16 +45,17 @@ router.get("/courses/:courseId", isLoggedIn, (req, res) => {
     });
 });
 
-//TO DO : routes for stripe-payment
+// routes for stripe-payment
 router.get("/courses/:courseId/payment", isLoggedIn, isParent, (req, res) => {
   const { _id } = req.session.loggedInUser; // Parent id as only parents can buy courses
   ParentModel.findByIdAndUpdate(_id, {
     $addToSet: { coursesBooked: req.params.courseId }, // addToSet, avoid duplicates but doesn't throw error if a course already exists
   })
     .then((parent) => {
-      res
-        .status(200)
-        .json({ message: "Your kido is going to be a NinjaCoder!" });
+      res.status(200).json({
+        message:
+          "And one more course for your kiddo ! He is going to be a NinjaCoder !",
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -135,7 +136,7 @@ router.get("/tutor/courses", isLoggedIn, isTutor, (req, res) => {
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
 router.post("/tutor/courses/add", isLoggedIn, isTutor, async (req, res) => {
-  const { name, description, price, image, video, lessons, review } = req.body;
+  const { name, description, price, image, video, review } = req.body;
   const tutorId = req.session.loggedInUser._id;
   console.log(req.body);
   // need to check here if the user is a teacher
@@ -148,7 +149,6 @@ router.post("/tutor/courses/add", isLoggedIn, isTutor, async (req, res) => {
       price,
       image,
       video,
-      lessons,
       review,
     });
     let updatedTutor = await TutorModel.findByIdAndUpdate(tutorId, {
@@ -193,11 +193,11 @@ router.delete("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
 //will handle all PATCH requests to http:localhost:5005/api/tutor/courses/:courseId
 router.patch("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
   let courseId = req.params.courseId;
-  const { name, description, price, image, video, lessons } = req.body;
+  const { name, description, price, image, video } = req.body;
   CourseModel.findByIdAndUpdate(
     courseId,
     {
-      $set: { name, description, price, image, video, lessons },
+      $set: { name, description, price, image, video },
     },
     { new: true }
   )

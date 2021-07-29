@@ -8,7 +8,6 @@ const courseSchema = new Schema({
   minAge: { type: Number },
   image: { type: String, required: true },
   video: { type: String, required: true },
-  lessons: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
   reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
 });
 

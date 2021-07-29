@@ -95,18 +95,4 @@ function createPasswordHash(password) {
   return bcrypt.hashSync(password, salt);
 }
 
-//Parent can get their reviews (TODO: To remove)
-// router.get("/parent/:courseId/rating", (req, res) => {
-//   const parentId = req.session.loggedInUser._id;
-//   const courseId = req.params.courseId;
-//   ReviewModel.find({ userId: parentId, courseId: courseId })
-//     .then((review) => res.status(200).json(review))
-//     .catch((err) => {
-//       res.status(500).json({
-//         error: "Something went wrong",
-//         message: err,
-//       });
-//     });
-// });
-
 module.exports = router;
