@@ -56,6 +56,9 @@ app.use("/api", tutorRoutes);
 const cloudinaryRoutes = require("./routes/file-upload.routes");
 app.use("/api", cloudinaryRoutes);
 
+const stripeRoutes = require("./routes/stripe.routes");
+app.use("/api", stripeRoutes);
+
 app.use((req, res, next) => {
   // If no routes match, send them the React HTML.
   res.sendFile(__dirname + "/public/index.html");

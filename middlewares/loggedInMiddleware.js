@@ -1,6 +1,7 @@
 // Middlewares to check if the user as tutor or as parent is logged in
 
 const isLoggedIn = (req, res, next) => {
+  console.log(req.session.loggedInUser);
   if (req.session.loggedInUser) {
     next();
   } else {
