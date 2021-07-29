@@ -22,8 +22,6 @@ router.post("/signup", (req, res) => {
     const { username, email, password, repeatedPassword, kidAge, secretWord } =
       req.body;
 
-    console.log(req.body);
-
     if (
       !ensureParentFieldsAreSet(
         username,
