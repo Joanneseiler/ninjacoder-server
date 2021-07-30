@@ -46,7 +46,7 @@ router.get("/courses/:courseId", isLoggedIn, (req, res) => {
 });
 
 // routes for stripe-payment
-router.get("/courses/:courseId/payment", isParent, (req, res) => {
+router.get("/courses/:courseId/payment", isLoggedIn, isParent, (req, res) => {
   const { _id } = req.session.loggedInUser; // Parent id as only parents can buy courses
   ParentModel.findByIdAndUpdate(_id, {
     $addToSet: { coursesBooked: req.params.courseId }, // addToSet, avoid duplicates but doesn't throw error if a course already exists
@@ -119,7 +119,7 @@ router.get("/courses/:courseId/rating", (req, res) => {
 // Action can be done only by the tutor
 // Get to tutor profile, to find all courses created by the tutor
 // to handle the GET requests to http:localhost:5005/api/tutor/courses
-router.get("/tutor/courses", isTutor, (req, res) => {
+router.get("/tutor/courses", isLoggedIn, isTutor, (req, res) => {
   const { _id } = req.session.loggedInUser;
   CourseModel.find({ tutor: _id })
     .then((course) => {
@@ -135,7 +135,7 @@ router.get("/tutor/courses", isTutor, (req, res) => {
 
 // Action can be done only by the tutor
 // to handle the POST requests to http:localhost:5005/api/tutor/courses/add
-router.post("/tutor/courses/add", isTutor, async (req, res) => {
+router.post("/tutor/courses/add", isLoggedIn, isTutor, async (req, res) => {
   const { name, description, price, image, video, review } = req.body;
   const tutorId = req.session.loggedInUser._id;
   // need to check here if the user is a teacher
@@ -165,7 +165,7 @@ router.post("/tutor/courses/add", isTutor, async (req, res) => {
 // Action can be done only by the tutor
 // Delete courses from database
 // will handle all DELETE requests to http:localhost:5005/api/courses/:courseId
-router.delete("/tutor/courses/:courseId", isTutor, (req, res) => {
+router.delete("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
   const tutorId = req.session.loggedInUser._id;
   const courseId = req.params.courseId;
   Promise.all([
@@ -190,7 +190,7 @@ router.delete("/tutor/courses/:courseId", isTutor, (req, res) => {
 // Action can be done only by the tutor
 // Edit courses from database
 //will handle all PATCH requests to http:localhost:5005/api/tutor/courses/:courseId
-router.patch("/tutor/courses/:courseId", isTutor, (req, res) => {
+router.patch("/tutor/courses/:courseId", isLoggedIn, isTutor, (req, res) => {
   let courseId = req.params.courseId;
   const { name, description, price, image, video } = req.body;
   CourseModel.findByIdAndUpdate(
